@@ -41,6 +41,7 @@ namespace Datingapp.API
                      opt.SerializerSettings.ReferenceLoopHandling =
                      Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                  });
+
             // Add Cors to unable http call on the client
             services.AddCors();
             services.AddAutoMapper();
@@ -88,10 +89,8 @@ namespace Datingapp.API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                // app.UseHsts();
             }
-
-           // seeder.SeedUser();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-           // app.UseHttpsRedirection();
+
             app.UseAuthentication();
             app.UseMvc();
         }
