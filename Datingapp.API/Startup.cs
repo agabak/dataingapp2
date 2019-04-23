@@ -46,7 +46,7 @@ namespace Datingapp.API
             services.AddAutoMapper();
 
             // dependancy injection  
-            services.AddTransient<Seed>();
+           // services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IDatingRepository,DatingRepository>();
 
@@ -65,7 +65,7 @@ namespace Datingapp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
