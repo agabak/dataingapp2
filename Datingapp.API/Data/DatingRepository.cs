@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Datingapp.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,9 @@ namespace Datingapp.API.Data
 
         public  async Task<IEnumerable<User>> GetUsers()
         {
-            return await  _context.Users.Include(p => p.Photos).ToListAsync();
+            return await  _context.Users.Include(p => p.Photos)
+                                        .Distinct<User>().OrderBy(x => x.Username)
+                                        .ToListAsync();
         }
 
         public  async Task<bool> SaveAll()
