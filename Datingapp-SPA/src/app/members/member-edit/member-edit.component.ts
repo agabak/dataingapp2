@@ -5,6 +5,7 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 import { NgForm } from '@angular/forms';
 import { UserService } from 'src/app/_services/user.service';
 import { UpdateUser } from 'src/app/_dtos/updateUser';
+import { AuthService } from 'src/app/_services/auth.service';
 
 @Component({
   selector: 'app-member-edit',
@@ -21,7 +22,8 @@ unloadNotification($event: any) {
     $event.returnValue = true;
   }
 }
-  constructor(private route: ActivatedRoute, private alertify: AlertifyService, private userService: UserService) { }
+  constructor(private route: ActivatedRoute, private alertify: AlertifyService, private userService: UserService,
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
@@ -38,7 +40,7 @@ unloadNotification($event: any) {
       country: this.user.country
     };
 
-    this.userService.updateUser(this.user.id, this.updateUse).subscribe(() => {
+    this.userService.updateUser(this.authService.decodedToken.nameid, this.updateUse).subscribe(() => {
       this.alertify.success('User updated Successfuly');
       this.editForm.reset(this.user);
     }, error => {
