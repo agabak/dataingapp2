@@ -45,7 +45,7 @@ namespace Datingapp.API
             // Add Cors to unable http call on the client
             services.AddCors();
             services.AddAutoMapper();
-
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             // dependancy injection  
            // services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
