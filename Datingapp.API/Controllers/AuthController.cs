@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Datingapp.API.Data;
 using Datingapp.API.Dtos;
+using Datingapp.API.Helpers;
 using Datingapp.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Datingapp.API.Controllers
 {
 
+    
     [Route("api/{controller}")]
     [ApiController]
     public class AuthController:ControllerBase
@@ -30,14 +32,20 @@ namespace Datingapp.API.Controllers
         }
 
           [HttpPost ("register")]
-        public async Task<IActionResult> Register (UserToRegisterDto userToRegisterDto) 
+        public async Task<IActionResult> Register ([FromBody]UserToRegisterDto userToRegisterDto) 
         {
+            if(!string.Equals(userToRegisterDto.Password, userToRegisterDto.ConfirmPassword)) {
+                return BadRequest("Password must match");
+            }
             userToRegisterDto.Username = userToRegisterDto.Username.ToLower ();
             if (await _repository.UserExist (userToRegisterDto.Username)) return BadRequest ("username already exists");
 
-            var userToCreate = new User { Username = userToRegisterDto.Username };
-            userToCreate = await _repository.Register (userToCreate, userToRegisterDto.Password);
-            return StatusCode (201);
+            var userToCreate = _mapper.Map<User>(userToRegisterDto);
+
+            var createdUser = await _repository.Register (userToCreate, userToRegisterDto.Password);
+            var userToReturn = _mapper.Map<UserForDetailDto>(createdUser);
+
+            return CreatedAtRoute("GetUser", new { Controller = "Users", id = createdUser.Id}, userToReturn);
         }
 
          [HttpPost ("login")]
