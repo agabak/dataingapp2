@@ -5,6 +5,7 @@ using AutoMapper;
 using Datingapp.API.Data;
 using Datingapp.API.Dtos;
 using Datingapp.API.Helpers;
+using Datingapp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,10 +27,19 @@ namespace Datingapp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-           var users = await _repo.GetUsers();
+           var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+           var userFromRepo = await _repo.GetUser(currentUserId);
+
+           if(string.IsNullOrEmpty(userParams.Gender)) 
+           {
+               userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+           }
+           var users = await _repo.GetUsers(userParams);
            var usersForReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+
+           Response.AddPagination(users.CurrentPage,userParams.PageSize,users.TotalCount, users.TotalPages);
            return Ok(usersForReturn);
         }
 
@@ -57,6 +67,30 @@ namespace Datingapp.API.Controllers
                 return NoContent();
             }
             return BadRequest();
-        }  
+        }
+
+        [HttpPost("{id}/like/{recipientId}")]  
+        public async Task<IActionResult> LikeUser(int id, int recipientId)
+        {
+            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+            
+            var like = await _repo.GetLike(id, recipientId);
+            if(like != null)
+                return BadRequest("Your already like this member");
+
+            if( await _repo.GetUser(recipientId) == null) {
+                return  NotFound();
+            }
+
+            like = new Like { LikerId = id, LikeeId = recipientId};
+            _repo.Add<Like>(like);
+            if(await _repo.SaveAll()) {
+                return Ok();
+            }
+            return  BadRequest("Failed to like user");
+        }
     }
 }

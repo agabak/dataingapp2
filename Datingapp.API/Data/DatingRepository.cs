@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Datingapp.API.Helpers;
 using Datingapp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +27,12 @@ namespace Datingapp.API.Data
             _context.Remove(entity);
         }
 
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context.Likes
+                                 .FirstOrDefaultAsync(u => u.LikerId == userId && u.LikeeId == recipientId);
+        }
+
         public async Task<Photo> GetPhoto(int id)
         {
             return await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
@@ -35,11 +43,24 @@ namespace Datingapp.API.Data
             return await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public  async Task<IEnumerable<User>> GetUsers()
+        public  async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            return await  _context.Users.Include(p => p.Photos)
-                                         .OrderBy(x => x.Username)
-                                         .ToListAsync();
+            var users =   _context.Users.Include(p => p.Photos).AsQueryable();
+
+               users = users.Where(x => x.Id != userParams.UserId);
+               users = users.Where(x => x.Gender == userParams.Gender);
+
+               if(userParams.MinAge != 18 || userParams.MaxAge != 99) 
+               {
+                   var minDob = DateTime.Today.AddYears(-userParams.MaxAge -1);
+                   var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+                   
+                    users = users.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
+
+               }
+
+            return await PagedList<User>.GreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         public  async Task<bool> SaveAll()
