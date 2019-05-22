@@ -15,13 +15,21 @@ export class UserService {
   baseUrl =  environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  getUsers(page?, itemPerPage?): Observable<PagenatedResult<User[]>> {
+  getUsers(page?, itemPerPage?, userParams?): Observable<PagenatedResult<User[]>> {
       const pagenatedResult: PagenatedResult<User[]> = new PagenatedResult<User[]>();
       let params = new HttpParams();
 
       if (page !== null && itemPerPage !== null) {
         params = params.append('pageNumber', page);
         params = params.append('pageSize', itemPerPage);
+      }
+
+      if (userParams != null || userParams !== undefined) {
+        console.log(userParams);
+        params = params.append('minAge', userParams.minAge);
+        params = params.append('maxAge', userParams.maxAge);
+        params = params.append('gender', userParams.gender);
+        params = params.append('orderBy', userParams.orderBy);
       }
       return  this.http.get<User[]>(this.baseUrl + 'users', {observe: 'response', params})
                .pipe(

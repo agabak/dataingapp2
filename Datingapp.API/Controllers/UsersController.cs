@@ -36,6 +36,8 @@ namespace Datingapp.API.Controllers
            {
                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
            }
+
+           userParams.UserId = currentUserId;
            var users = await _repo.GetUsers(userParams);
            var usersForReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
 

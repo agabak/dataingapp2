@@ -5,8 +5,8 @@ import { HttpClientModule} from '@angular/common/http';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { PaginationModule
- } from 'ngx-bootstrap/pagination';
+import { PaginationModule} from 'ngx-bootstrap/pagination';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from 'ngx-gallery';
@@ -63,6 +63,7 @@ export function tokeGetter() {
     TabsModule.forRoot(),
     PaginationModule.forRoot(),
     RouterModule.forRoot(appRoutes),
+    ButtonsModule.forRoot(),
     JwtModule.forRoot({
       config: {
         tokenGetter: tokeGetter,
