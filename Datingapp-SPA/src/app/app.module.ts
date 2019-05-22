@@ -30,6 +30,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedChangeGuard } from './_guards/prevent-unsaved-changes-guard';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { ListsResolver } from './_resolvers/lists.resolver';
 
 export function tokeGetter() {
   return localStorage.getItem('token');
@@ -74,7 +75,7 @@ export function tokeGetter() {
   ],
   providers: [ErrorInterceptorProvider, MemberDetailResolver ,
               MemberListResolver, MemberEditResolver,
-              PreventUnsavedChangeGuard],
+              PreventUnsavedChangeGuard, ListsResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
