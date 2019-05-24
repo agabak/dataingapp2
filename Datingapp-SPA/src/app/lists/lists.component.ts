@@ -15,7 +15,7 @@ export class ListsComponent implements OnInit {
 users: User[];
 pagination: Pagination;
 likesParam: string;
-  constructor(private authService: AuthService, private userService: UserService,
+  constructor(private userService: UserService,
               private route: ActivatedRoute, private alertify: AlertifyService) { }
 
   ngOnInit() {
