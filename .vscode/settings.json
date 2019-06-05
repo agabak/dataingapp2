@@ -1,0 +1,30 @@
+{
+    "deploy": {
+      "packages": [
+        {
+          "name": "Version 1.0",
+          "description": "Dating App Version 1.0",
+          "files": ["DatingApp.API/bin/Debug/netcoreapp2.2/publish/**"]
+        }
+      ],
+      "targets": [
+        {
+          "type": "sftp",
+          "name": "Linux",
+          "description": "Remote Linux Server",
+          "dir": "/var/datingapp",
+          "mappings": [
+              {
+                "source": "/DatingApp.API/bin/Debug/netcoreapp2.2/publish",
+                  "target": "/"
+              }
+          ],
+          "host": "165.22.12.177",
+          "port": 22,
+          "user": "root", "password": "Tunu@Msewe123",
+          "checkBeforeDeploy": true
+        }
+      ]
+    }
+  }
+  
